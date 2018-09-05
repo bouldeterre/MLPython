@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "MachineLearning"
+version = "0.1.0"
+description = ""
+authors = ["Emonides Pierre-Emmanuel <pierreemmanuel.emonides@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.7"
+numpy = "^1.15"
+scipy = "^1.1"
+matplotlib = "^2.2"
+ipython = "^6.5"
+scikit-learn = "^0.19.2"
+pandas = "^0.23.4"
+pillow = "^5.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"

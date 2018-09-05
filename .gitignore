@@ -1,0 +1,7 @@
+#*#
+__pycache__/
+dist/MachineLearning-0.1.0.tar.gz
+machinelearning.egg-info/
+\#*\#
+.\#*
+dist/
