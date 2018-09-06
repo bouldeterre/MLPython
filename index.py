@@ -1,13 +1,26 @@
-import numpy as np
+import click
+from demo import demo
+
+from sklearn.datasets import load_iris
 
 
+@click.group()
+def cli():
+    pass
+    
 
-def main():
-    x = np.array([[1, 2, 3], [4, 5, 6]])
-    print("x:\n{}".format(x))
+@click.command()
+def run ():
+    print("Run:")
+    iris_dataset = load_iris()
+    print("Keys of iris_dataset: \n{}".format(iris_dataset.keys()))
 
+
+cli.add_command(demo.demo_numpy)
+cli.add_command(demo.demo_scipy)
+cli.add_command(demo.demo_plot)
+cli.add_command(demo.demo_panda)
+cli.add_command(run)
 
 if __name__ == "__main__":
-    # execute only if run as a script
-    main()
-    
+    cli()
