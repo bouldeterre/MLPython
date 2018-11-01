@@ -1,24 +1,15 @@
-import click
 from demo import demo
-
-from sklearn.datasets import load_iris
+from graph import graph
+from models.data_set import DataSet
 from sklearn.model_selection import train_test_split
+
+import click
+import numpy as np
+from sklearn.datasets import load_iris
 import pandas as pd
 import mglearn
 import matplotlib.pyplot as plt
-
-
-class DataSet:
-    def __init__(self, _X_train, _X_test, _y_train, _y_test):
-        self.X_train = _X_train
-        self.y_train = _y_train
-        self.X_test = _X_test
-        self.y_test = _y_test
-
-    def __str__(self):
-        return f"Set Shape:\n X_train:{self.X_train.shape} y_train:{self.y_train.shape} \n \
-X_test:{self.X_test.shape} y_test:{self.y_test.shape}"
-
+from sklearn.neighbors import KNeighborsClassifier
 
 @click.group()
 def cli():
@@ -32,27 +23,6 @@ def datasetdesc():
     print(iris_dataset["DESCR"][:983])
 
 
-@click.command()
-def datasetscatter():
-    iris_dataset = load_iris()
-    myset = DataSet(
-        *train_test_split(iris_dataset["data"], iris_dataset["target"], random_state=0)
-    )
-    print(iris_dataset.feature_names)
-    # Plot test data
-    iris_dataframe = pd.DataFrame(myset.X_train, columns=iris_dataset.feature_names)
-    pd.plotting.scatter_matrix(
-        iris_dataframe,
-        c=myset.y_train,
-        figsize=(10, 10),
-        marker="o",
-        hist_kwds={"bins": 20},
-        s=60,
-        alpha=.5,
-        cmap=mglearn.cm3,
-    )
-    plt.show()
-
 
 @click.command()
 def run():
@@ -60,18 +30,40 @@ def run():
     iris_dataset = load_iris()
 
     myset = DataSet(
-        *train_test_split(iris_dataset["data"], iris_dataset["target"], random_state=0)
+        *train_test_split(iris_dataset["data"], iris_dataset["target"], random_state=0, test_size=0.25)
     )
     print(myset)
 
+    #Model
+    knn = KNeighborsClassifier(n_neighbors=1)
+    #Train with data
+    knn.fit(myset.X_train, myset.y_train)
 
+    sepalLength = 5
+    sepalWidth = 2.9
+    petalLength = 1
+    petalWidth = 0.2
+    
+    X_new = np.array([[sepalLength, sepalWidth, petalLength, petalWidth]])
+    print("X_new.shape: {}".format(X_new.shape))
+    
+    prediction = knn.predict(X_new)
+    print("Prediction: {}".format(prediction))
+    print("Predicted target name: {}".format(
+        iris_dataset['target_names'][prediction]))
+
+    y_pred = knn.predict(myset.X_test)
+    print("Test set predictions:\n {}".format(y_pred))
+    score = np.mean(y_pred == myset.y_test)
+    print("Test set score: {:.2f}".format(score))
+    
 cli.add_command(demo.demo_numpy)
 cli.add_command(demo.demo_scipy)
 cli.add_command(demo.demo_plot)
 cli.add_command(demo.demo_panda)
+cli.add_command(graph.datasetscatter)
 cli.add_command(run)
 cli.add_command(datasetdesc)
-cli.add_command(datasetscatter)
 
 if __name__ == "__main__":
     cli()
